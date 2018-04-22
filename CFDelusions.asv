@@ -27,32 +27,30 @@ j = 1; % Horizontal counter
 
 for k=1:n_nodes_y*n_nodes_x
     
-    if j == 1 % Left Boundary
-        A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
-        %A(k,k-1) = A(k,k-1) - cd*dy/dx* ;
-        A(k,k+1) = A(k,k+1) + cd*dy/dx;
-        if i == 1
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
-            %A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - cd*dx/dy;
-        elseif i == n_nodes_y
-            %A(k,k+n_nodes_x) = A(k,k+n_nodes_x) - cd*dx/dy;
-            A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
-        else
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
-            A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
-        end
-        B(k) = B(k)+ source(centro_x(j), centro_y(i));
+    if j == 1 % West Flux
+      
+        %e boundary
+    else 
+        % e normal
         
-    elseif j == n_nodes_x % Right Boundary
-
-
-        j = 0;
-        i = i+1; 
-     
-    elseif i == 1 % Lower Boundary
+    end
+        
+    if j == n_nodes_x % East Flux
+      
+        %e boundary
+    else 
+        % e normal
+        
+    end
+    
+    
+    
+    
+    
+    elseif i == 1 % South Flux
         
     
-    elseif i == n_nodes_y % Upper Boundary
+    elseif i == n_nodes_y % North Flux
                 
     else % Middle
         A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
@@ -64,10 +62,13 @@ for k=1:n_nodes_y*n_nodes_x
         B(k) = B(k) + source(centro_x(j), centro_y(i));
         
        
-        
+        B(k) = B(k) + source(centro_x(j), centro_y(i));
 
+    end    
+    if j == n_nodes_x % Right Boundary
+        j = 0;
+        i = i+1; 
     end
-    
     
 j = j+1;
 end
