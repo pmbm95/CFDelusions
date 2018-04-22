@@ -28,12 +28,24 @@ j = 1; % Horizontal counter
 for k=1:n_nodes_y*n_nodes_x
     
     if j == 1 % Left Boundary
+        A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
+        B(k) = B(k) - cd*dy/dx*exact(centro_x(j)-dx/2, centro_y(i));
+        A(k,k+1) = A(k,k+1) + cd*dy/dx;
+        if i == 1
+            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
+            B(k) = B(k) - cd*dx/dy*exact(centro_x(j), centro_y(i)-dy/2);
+        elseif i == n_nodes_y
+            B(k) = B(k) - cd*dx/dy*exact(centro_x(j), centro_y(i)+dy/2);
+            A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
+        else
+            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
+            A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
+        end
+        B(k) = B(k)+ source(centro_x(j), centro_y(i));
+        
     elseif j == n_nodes_x % Right Boundary
 
-        
-        
-        
-        
+
         j = 0;
         i = i+1; 
      
@@ -43,24 +55,18 @@ for k=1:n_nodes_y*n_nodes_x
     elseif i == n_nodes_y % Upper Boundary
                 
     else % Middle
-     A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
+        A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
         A(k,k-1) = A(k,k-1) + cd*dy/dx;
         A(k,k+1) = A(k,k+1) + cd*dy/dx;
         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
         A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
 
-        B(k) = source(centro_x(j), centro_y(i));
+        B(k) = B(k) + source(centro_x(j), centro_y(i));
         
        
         
 
     end
-          k      
- i 
- j
-   
-
-    
     
     
 j = j+1;
