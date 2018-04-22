@@ -77,13 +77,7 @@ for k=1:n_nodes_y*n_nodes_x
         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
     end
     
-%     % Middle
-%     A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
-%     A(k,k-1) = A(k,k-1) + cd*dy/dx;
-%     A(k,k+1) = A(k,k+1) + cd*dy/dx;
-%     A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
-%     A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
-    
+    % --- Source---
     B(k) = B(k) - source(centro_x(j), centro_y(i));
     
     if j == n_nodes_x % Right Boundary
@@ -94,4 +88,3 @@ for k=1:n_nodes_y*n_nodes_x
     end
 end
 
-fprintf('lol')
