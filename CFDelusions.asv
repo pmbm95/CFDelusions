@@ -50,16 +50,24 @@ for k=1:n_nodes_y*n_nodes_x
     
     if i == 1 % South Flux
       %e boundary
+<<<<<<< HEAD
       
     else
+=======
+    else % Center
+>>>>>>> 64c264267d1c8c94e82bdb01d9abb89d1a35257b
         % e normal
         A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
     end
     
-    if i == n_nodes_y % North Flux
-    %e boundary
-    else
-        % e normal
+    % --- North Flux ---
+    if i == n_nodes_y % Boundary
+        A(k,k) = A(k,k) - 3.5*cd*dy/dx;
+        A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
+        B(k) = B(k) - 3*cd*dx/dy*exact(centro_x(j), centro_y(i)+dy);
+    else % Center
+        A(k,k) = A(k,k) - cd*dx/dy;
+        A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
     end
     
     % Middle
