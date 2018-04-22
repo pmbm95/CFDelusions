@@ -27,37 +27,24 @@ j = 1; % Horizontal counter
 
 for k=1:n_nodes_y*n_nodes_x
     
-<<<<<<< HEAD
-    if j == 1 % West Flux
-        
-        %e boundary
-    else
-        % e normal
-        
-    end
-    
-    if j == n_nodes_x % East Flux  
-       %e boundary
-       A(k,k)= A(k,k) - 3.5*cd*(dy/dx);
-       A(k,k-1)= A(k,k-1) - 0.5*cd*(dy/dx);
-       B(k)= B(k)  -
-=======
     % --- West Flux ---
     if j == 1 % Boundary
-        A(k,k) = A(k,k) + 7/5
-        A(k,k+1) = A(k,k+1)
+        A(k,k) = A(k,k) - 3.5*cd*dy/dx;
+        A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
+        B(k) = B(k)- 3*cd*dy/dx*exact(centro_x(j)-dx/2, centro_y(i));
     else % Center
         A(k,k) = A(k,k) - cd*dy/dx;
         A(k,k-1) = A(k,k-1) + cd*dy/dx;        
     end
     
-    if j == n_nodes_x % East Flux
-        
-        %e boundary
->>>>>>> 822dff954bf3397bd19841b84909613ef5b8a49c
+    if j == n_nodes_x % East Flux  
+       %e boundary
+       A(k,k)= A(k,k) - 3.5*cd*(dy/dx);
+       A(k,k-1)= A(k,k-1) + 0.5*cd*(dy/dx);
+       B(k)= B(k) - 3*cd*(dy/dx)*exact(centro_x(j)+(dx/2), centro_y(i));
     else
         % e normal
-        
+        A(k,k+1)= A(k,k+1) - 3.5*cd*(dy/dx);
     end
     
     if i == 1 % South Flux
@@ -90,3 +77,4 @@ for k=1:n_nodes_y*n_nodes_x
     end
 end
 
+fprintf('lol')
