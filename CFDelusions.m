@@ -18,16 +18,22 @@ centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
 A = zeros(n_nodes_y*n_nodes_x);
 B = zeros(n_nodes_y*n_nodes_x, 1);
-%---------Ceoff de difusao para projetos futuros----------
+
+%--------- Coeff de difusao ----------
 cd = 1;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
 
 S_boundary_n = false;
-N_noundary_n = false;
+N_boundary_n = false;
 W_boundary_n = false;
-E_noundary_n = false;
+E_boundary_n = false;
+
+S_n = 0;
+N_n = 0;
+W_n = 0;
+E_n = 0;
 
 for k=1:n_nodes_y*n_nodes_x
     
@@ -71,12 +77,12 @@ for k=1:n_nodes_y*n_nodes_x
         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
     end
     
-    % Middle
-    A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
-    A(k,k-1) = A(k,k-1) + cd*dy/dx;
-    A(k,k+1) = A(k,k+1) + cd*dy/dx;
-    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
-    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
+%     % Middle
+%     A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
+%     A(k,k-1) = A(k,k-1) + cd*dy/dx;
+%     A(k,k+1) = A(k,k+1) + cd*dy/dx;
+%     A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
+%     A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
     
     B(k) = B(k) - source(centro_x(j), centro_y(i));
     
