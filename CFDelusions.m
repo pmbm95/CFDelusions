@@ -27,12 +27,14 @@ j = 1; % Horizontal counter
 
 for k=1:n_nodes_y*n_nodes_x
     
-    if j == 1 % West Flux
-        
-        %e boundary
-    else
-        % e normal
-        
+    % --- West Flux ---
+    if j == 1 % Boundary
+        A(k,k) = A(k,k) - 3.5*cd*dy/dx;
+        A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
+        B(k) = B(k)- 3*cd*dy/dx*exact(centro_x(j)-dx/2, centro_y(i));
+    else % Center
+        A(k,k) = A(k,k) - cd*dy/dx;
+        A(k,k-1) = A(k,k-1) + cd*dy/dx;        
     end
     
     if j == n_nodes_x % East Flux
@@ -63,7 +65,7 @@ for k=1:n_nodes_y*n_nodes_x
     A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
     
     
-    B(k) = B(k) + source(centro_x(j), centro_y(i));
+    B(k) = B(k) - source(centro_x(j), centro_y(i));
     
     if j == n_nodes_x % Right Boundary
         j = 1;
