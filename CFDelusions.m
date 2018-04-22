@@ -18,12 +18,22 @@ centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
 A = zeros(n_nodes_y*n_nodes_x);
 B = zeros(n_nodes_y*n_nodes_x, 1);
-%---------Ceoff de difusao para projetos futuros----------
+
+%--------- Coeff de difusao ----------
 cd = 1;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
 
+S_boundary_n = false;
+N_boundary_n = false;
+W_boundary_n = false;
+E_boundary_n = false;
+
+S_n = 0;
+N_n = 0;
+W_n = 0;
+E_n = 0;
 
 for k=1:n_nodes_y*n_nodes_x
     
