@@ -12,13 +12,13 @@ dy = (dominio_y(2) - dominio_y(1) ) / n_nodes_y;
 centro_x = (dominio_x(1)+dx/2) : dx : (dominio_x(2)-dx/2);
 centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
-[x_nodes y_nodes] = meshgrid(centro_x, centro_y);
+[x_nodes, y_nodes] = meshgrid(centro_x, centro_y);
 
 %plot(x_nodes, y_nodes, 'k.')
 
 A = zeros(n_nodes_y*n_nodes_x);
 B = zeros(n_nodes_y*n_nodes_x, 1);
-%---------Ceoff de difusao para porjetos futuros----------
+%---------Ceoff de difusao para projetos futuros----------
 cd = 1;
 
 i = 1 ;% Vertical Counter
