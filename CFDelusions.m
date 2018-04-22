@@ -50,8 +50,11 @@ for k=1:n_nodes_y*n_nodes_x
     
     if i == 1 % South Flux
       %e boundary
+      
     else
         % e normal
+        A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*(dx/dy);
+        A(k,k) = A(k,k) - cd*(dx/dy);
     end
     
     if i == n_nodes_y % North Flux
