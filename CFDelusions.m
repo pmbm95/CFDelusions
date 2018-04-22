@@ -78,7 +78,8 @@ for k=1:n_nodes_y*n_nodes_x
         A(k,k) = A(k,k) - cd*dx/dy;
         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
     end
-    
+        % --- Source---
+
     B(k) = B(k) - source(centro_x(j), centro_y(i));
     
     if j == n_nodes_x % Right Boundary
@@ -88,6 +89,7 @@ for k=1:n_nodes_y*n_nodes_x
         j = j+1;
     end
 end
+
 
 
 U = A\B;
