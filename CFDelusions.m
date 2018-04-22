@@ -24,6 +24,10 @@ cd = 1;
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
 
+S_boundary_n = false;
+N_noundary_n = false;
+W_boundary_n = false;
+E_noundary_n = false;
 
 for k=1:n_nodes_y*n_nodes_x
     
