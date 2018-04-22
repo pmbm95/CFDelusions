@@ -1,4 +1,3 @@
-
 dominio_x = [-0.5 0.5];
 dominio_y = [-0.5 0.5];
 n_nodes_x = 20;
@@ -16,7 +15,9 @@ plot(x_nodes, y_nodes, 'k.')
 
 A = zeros(n_nodes_y*n_nodes_x);
 B = zeros(n_nodes_y*n_nodes_x, 1);
+%---------Ceoff de difusao para porjetos futuros----------
 cd = 1;
+
 for k=1:n_nodes_y*n_nodes_x
     
     A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
