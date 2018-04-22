@@ -36,6 +36,12 @@ for k=1:n_nodes_y*n_nodes_x
     B(k) = source(centro_x(j), centro_y(i));
     
     
+    j = j+1;
+    if j == n_nodes_x
+        j = 1;
+        i = i+1;
+        
+    end
     
     
 end
