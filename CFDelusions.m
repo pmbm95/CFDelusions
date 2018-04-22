@@ -44,7 +44,8 @@ for k=1:n_nodes_y*n_nodes_x
        B(k)= B(k) - 3*cd*(dy/dx)*exact(centro_x(j)+(dx/2), centro_y(i));
     else
         % e normal
-        
+        A(k,k+1)= A(k,k+1) + cd*(dy/dx);
+        A(k,k)= A(k,k) - cd*(dy/dx);
     end
     
     if i == 1 % South Flux
