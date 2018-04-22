@@ -17,6 +17,10 @@ plot(x_nodes, y_nodes, 'k.')
 A = zeros(n_nodes_y*n_nodes_x);
 B = zeros(n_nodes_y*n_nodes_x, 1);
 cd = 1;
+
+i = % Vertical Counter
+
+
 for k=1:n_nodes_y*n_nodes_x
     
     A(k,k) = A(k,k) - 2 *cd*(dx/dy + dy/dx);
@@ -24,6 +28,8 @@ for k=1:n_nodes_y*n_nodes_x
     A(k,k+1) = A(k,k+1) + cd*dy/dx;
     A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*dx/dy;
     A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*dx/dy;
+    
+    B(k) = source(c
     
     
 end
