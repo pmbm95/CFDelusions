@@ -103,8 +103,8 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
                 B(k) = B(k) + 1*Vx*dy*exact(centro_x(j+1)+(dx/2), centro_y(i));
             else
-                A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
-                A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
+                A(k,k+1)= A(k,k+1) + 3*(Vx*dy*0.5); 
+                A(k,k+2)= A(k,k+2) - 1*(Vx*dy*0.5);
             end
     end
     
