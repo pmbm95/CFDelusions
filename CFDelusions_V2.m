@@ -61,11 +61,13 @@ for k=1:n_nodes_y*n_nodes_x
         %Convection
         if Vx > 0
             if j==2 
+                %A(k,k-1) =  A(k,k-1) - Vx*dy;
                 A(k,k-1) = A(k,k-1) - 2*Vx*dy;
                 B(k) = B(k) - 1*Vx*dy*exact(centro_x(j-1)-(dx/2), centro_y(i));
             else
-                A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
-                A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
+                A(k,k-1) =  A(k,k-1) - Vx*dy;
+                %A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
+                %A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
             end
         else %vento negativo
             if j== n_nodes_x
@@ -92,11 +94,13 @@ for k=1:n_nodes_y*n_nodes_x
         %Convection
         if Vx > 0
              if j==1
+                %A(k,k) =  A(k,k) + Vx*dy;
                 A(k,k) = A(k,k) + 2*Vx*dy;
                 B(k) = B(k) + 1*Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
              else
-                A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
-                A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
+                A(k,k) =  A(k,k) + Vx*dy;
+                %A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
+                %A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
              end
         else %vento negativo
             if j==n_nodes_x-1
@@ -124,11 +128,13 @@ for k=1:n_nodes_y*n_nodes_x
         % Convection
         if Vy > 0
             if i == 2 
+                %A(k,k-n_nodes_x) =  A(k,k-n_nodes_x) - Vy*dx;
                 A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - Vy*dx*2;
                 B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i-1)-(dy/2));
             else
-                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
-                A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
+                A(k,k-n_nodes_x) =  A(k,k-n_nodes_x) - Vy*dx;
+                %A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
+                %A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
             end
         else
             if i == n_nodes_y
@@ -157,11 +163,13 @@ for k=1:n_nodes_y*n_nodes_x
         % Convection
         if Vy > 0
             if i == 1
+                %A(k,k) =  A(k,k) + Vy*dx;
                 A(k,k) = A(k,k) + Vy*dx*2;
                 B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2));
             else 
-                A(k,k) = A(k,k) + 0.5*Vy*dx*3;
-                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
+                A(k,k) =  A(k,k) + Vy*dx;
+                %A(k,k) = A(k,k) + 0.5*Vy*dx*3;
+                %A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
             end
         else
             if i == n_nodes_y-1
