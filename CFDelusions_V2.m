@@ -179,10 +179,38 @@ for k=1:n_nodes_y*n_nodes_x
 end
 
 
-U = A\B;
+
+SOR = false;
+if SOR
+    w = 1;
+    n_iter_limit = 20;
+    n_iter = 1;
+    u_old = zeros(n_nodes_x*n_nodes_y,1);
+    while residual >= 1e-4
+       Low = tril(A,-1);
+       Up = triu(A,1);
+       D = diag(diag(A));
+       for i=1:n_nodes_x*n_nodes_y
+           u(i) = D(i,i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
+           u(i) = u_old(i) + w*(u(i)-u_old(i));      
+       end
+       residual = sum((u-u_old)^2)^0.5;
+       u_old = u;
+       
+       display = ['Iteration: ', n_iter]
+       disp(display)
+       display = ['Residual: ', residual]
+       disp(display)
+	
+        if n_iter >= n_iter_limit
+            break
+        end
+        n_iter = n_iter + 1;   
+    end
+else
+    U = A\B;
+end
 U = vec2mat(U,n_nodes_x);
-
-
 
 h = pcolor(x_nodes, y_nodes, U);
 %set(h, 'EdgeColor', 'none');
