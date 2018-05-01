@@ -94,9 +94,14 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
             end
         else
-            A(k,k) = A(k,k) - 0.5*Vy*dx*3;
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
-        end 
+            if i == n_nodes_y
+                A(k,k) = A(k,k) - Vy*dx*2;
+                B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2));
+            else 
+                A(k,k) = A(k,k) - 0.5*Vy*dx*3;
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
+            end 
+        end
     end
     
     % --- North Flux ---
@@ -122,8 +127,13 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
             end
         else
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
-            A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+            if i == n_nodes_y-1
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + Vy*dx*2;
+                B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i+1)+(dy/2));
+            else
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
+                A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+            end
         end
     end
     
