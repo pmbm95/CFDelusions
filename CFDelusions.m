@@ -1,11 +1,16 @@
 clc
 clear all
 close all
-
+% Computation Time
+% Convection
+% Time Dependent
+% Non Linear
+% SOR/ Jacobi
+% Residual
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 40;
-n_nodes_y = 40;
+n_nodes_x = 160;
+n_nodes_y = 160;
 
 dx = (dominio_x(2) - dominio_x(1) ) / n_nodes_x;
 dy = (dominio_y(2) - dominio_y(1) ) / n_nodes_y;
@@ -17,8 +22,8 @@ centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
 plot(x_nodes, y_nodes, 'k.')
 
-A = zeros(n_nodes_y*n_nodes_x, n_nodes_y*n_nodes_x);
-B = zeros(n_nodes_y*n_nodes_x, 1);
+A = sparse(n_nodes_y*n_nodes_x, n_nodes_y*n_nodes_x);
+B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
 cd = 1;
@@ -93,7 +98,7 @@ for k=1:n_nodes_y*n_nodes_x
     
     
     % --- Source---
-    B(k) = B(k) - source(centro_x(j), centro_y(i))*dx*dy;
+    B(k) = B(k) + source(centro_x(j), centro_y(i))*dx*dy;
     
     if j == n_nodes_x % Right Boundary
         j = 1;
