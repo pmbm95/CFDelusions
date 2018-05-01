@@ -9,8 +9,8 @@ close all
 % Residual
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 160;
-n_nodes_y = 160;
+n_nodes_x = 80;
+n_nodes_y = 80;
 
 dx = (dominio_x(2) - dominio_x(1) ) / n_nodes_x;
 dy = (dominio_y(2) - dominio_y(1) ) / n_nodes_y;
@@ -27,8 +27,8 @@ B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
 cd = 1;
-Vx = 1;
-Vy = 1;
+Vx = 100;
+Vy = 100;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
@@ -52,8 +52,7 @@ for k=1:n_nodes_y*n_nodes_x
         A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
         B(k) = B(k) - 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
         %Convection
-        B(k) = B(k) + Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
-        
+        B(k) = B(k) + Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));     
     else % Center
         %Diffusion
         A(k,k) = A(k,k) - cd*(dy/dx);
@@ -76,6 +75,7 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
                 A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
             end
+        end
     end
     
     % --- East Flux ---
@@ -103,9 +103,10 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
                 B(k) = B(k) + 1*Vx*dy*exact(centro_x(j+1)+(dx/2), centro_y(i));
             else
-                A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
-                A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
+                A(k,k+1)= A(k,k+1) + 3*(Vx*dy*0.5); 
+                A(k,k+2)= A(k,k+2) - 1*(Vx*dy*0.5);
             end
+        end
     end
     
     % --- South Flux ---
@@ -189,19 +190,21 @@ end
 
 SOR = false;
 if SOR
-    w = 1;
+    w = 1.5;
     n_iter_limit = 20;
     n_iter = 1;
     u_old = zeros(n_nodes_x*n_nodes_y,1);
+    residual = 1;
     while residual >= 1e-4
        Low = tril(A,-1);
        Up = triu(A,1);
        D = diag(diag(A));
+       u = zeros(n_nodes_x*n_nodes_y,1);
        for i=1:n_nodes_x*n_nodes_y
            u(i) = D(i,i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
            u(i) = u_old(i) + w*(u(i)-u_old(i));      
        end
-       residual = sum((u-u_old)^2)^0.5;
+       residual = sum((u-u_old).^2)^0.5;
        u_old = u;
        
        display = ['Iteration: ', n_iter]
@@ -214,6 +217,7 @@ if SOR
         end
         n_iter = n_iter + 1;   
     end
+    U = u;
 else
     U = A\B;
 end
