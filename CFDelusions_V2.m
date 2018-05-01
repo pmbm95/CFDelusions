@@ -27,6 +27,8 @@ B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
 cd = 1;
+Vx = 1;
+Vy = 1;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
@@ -101,28 +103,67 @@ for k=1:n_nodes_y*n_nodes_x
     
     % --- South Flux ---
     if i == 1 % Boundary
+        % Diffusion
         A(k,k)= A(k,k) - 3.5*cd*(dx/dy);
         A(k,k+n_nodes_x)= A(k,k+n_nodes_x) + 0.5*cd*(dx/dy);
         B(k)= B(k) - 3*cd*(dx/dy) * exact(centro_x(j), centro_y(i)-(dy/2));
-        
-        %         A(k,k)= A(k,k) - 2*cd*(dx/dy);
-        %         B(k)= B(k) - 2*cd*(dx/dy) * exact(centro_x(j), centro_y(i)-(dy/2));
+        % Convection
+        B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2));
     else % Center
+        % Diffusion
         A(k,k) = A(k,k) - cd*(dx/dy);
         A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*(dx/dy);
+        % Convection
+        if Vy > 0
+            if i == 2 
+                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - Vy*dx*2;
+                B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i-1)-(dy/2));
+            else
+                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
+                A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
+            end
+        else
+            if i == n_nodes_y
+                A(k,k) = A(k,k) - Vy*dx*2;
+                B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2));
+            else 
+                A(k,k) = A(k,k) - 0.5*Vy*dx*3;
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
+            end 
+        end
     end
     
     % --- North Flux ---
     if i == n_nodes_y % Boundary
+        % Diffusion
         A(k,k) = A(k,k) - 3.5*cd*(dx/dy);
         A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + 0.5*cd*dx/dy;
         B(k) = B(k) - 3*cd*(dx/dy)*exact(centro_x(j), centro_y(i)+(dy/2));
-        
-        %         A(k,k) = A(k,k) - 2*cd*dx/dy;
-        %         B(k) = B(k) - 2*cd*(dx/dy)*exact(centro_x(j), centro_y(i)+(dy/2));
+        % Convection
+        B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2));
     else % Center
+        % Diffusion
         A(k,k) = A(k,k) - cd*(dx/dy);
         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*(dx/dy);
+        
+        % Convection
+        if Vy > 0
+            if i == 1
+                A(k,k) = A(k,k) + Vy*dx*2;
+                B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2));
+            else 
+                A(k,k) = A(k,k) + 0.5*Vy*dx*3;
+                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
+            end
+        else
+            if i == n_nodes_y-1
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + Vy*dx*2;
+                B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i+1)+(dy/2));
+            else
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
+                A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+            end
+        end
     end
     
     
