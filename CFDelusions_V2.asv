@@ -69,6 +69,7 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
             end
         else %vento negativo
+<<<<<<< HEAD
             if j== n_nodes_x
                 A(k,k) = A(k,k) - 2*Vx*dy;
                 
@@ -76,6 +77,11 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
                 A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
             end
+=======
+           A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
+           A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
+        end
+>>>>>>> c11d8a54976f80c37df065db5621ed82c4f6407b
     end
     
     % --- East Flux ---
@@ -98,6 +104,7 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
                 A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
              end
+<<<<<<< HEAD
         else %vento negativo
             if j==n_nodes_x-1
                 A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
@@ -106,6 +113,12 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
                 A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
             end
+=======
+        else
+           A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
+           A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
+        end
+>>>>>>> c11d8a54976f80c37df065db5621ed82c4f6407b
     end
     
     % --- South Flux ---
@@ -186,10 +199,38 @@ for k=1:n_nodes_y*n_nodes_x
 end
 
 
-U = A\B;
+
+SOR = false;
+if SOR
+    w = 1;
+    n_iter_limit = 20;
+    n_iter = 1;
+    u_old = zeros(n_nodes_x*n_nodes_y,1);
+    while residual >= 1e-4
+       Low = tril(A,-1);
+       Up = triu(A,1);
+       D = diag(diag(A));
+       for i=1:n_nodes_x*n_nodes_y
+           u(i) = D(i,i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
+           u(i) = u_old(i) + w*(u(i)-u_old(i));      
+       end
+       residual = sum((u-u_old)^2)^0.5;
+       u_old = u;
+       
+       
+       print('Iteration: {}'.format(n_iter))
+        print('Residual: {}'.format(res))
+        # Count Iterations and Limit
+        n_iter = n_iter + 1;
+        if n_iter >= n_iter_limit
+            break
+       ned
+       
+    end
+else
+    U = A\B;
+end
 U = vec2mat(U,n_nodes_x);
-
-
 
 h = pcolor(x_nodes, y_nodes, U);
 %set(h, 'EdgeColor', 'none');
