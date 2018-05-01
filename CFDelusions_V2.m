@@ -50,7 +50,7 @@ for k=1:n_nodes_y*n_nodes_x
         %Diffusion
         A(k,k) = A(k,k) - 3.5*cd*(dy/dx);
         A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
-        B(k) = B(k)- 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
+        B(k) = B(k) - 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
         %Convection
         B(k) = B(k) + Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
         
@@ -69,9 +69,13 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
             end
         else %vento negativo
-           A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
-           A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
-        end
+            if j== n_nodes_x
+                A(k,k) = A(k,k) - 2*Vx*dy;
+                B(k) = B(k) - 1*Vx*dy*exact(centro_x(j)+ (dx/2), centro_y(i));
+            else
+                A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
+                A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
+            end
     end
     
     % --- East Flux ---
@@ -84,8 +88,7 @@ for k=1:n_nodes_y*n_nodes_x
     else % Center
         %Diffusion
         A(k,k)= A(k,k) - cd*(dy/dx);
-        A(k,k+1)= A(k,k+1) + cd*(dy/dx);
-        
+        A(k,k+1)= A(k,k+1) + cd*(dy/dx);   
         %Convection
         if Vx > 0
              if j==1
@@ -95,10 +98,14 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
                 A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
              end
-        else
-           A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
-           A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
-        end
+        else %vento negativo
+            if j==n_nodes_x-1
+                A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
+                B(k) = B(k) + 1*Vx*dy*exact(centro_x(j+1)+(dx/2), centro_y(i));
+            else
+                A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
+                A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
+            end
     end
     
     % --- South Flux ---

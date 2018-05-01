@@ -27,6 +27,8 @@ B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
 cd = 1;
+Vx = 1;
+Vy = 1;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
@@ -42,14 +44,13 @@ N_n = 0;
 W_n = 0;
 E_n = 0;
 
-<<<<<<< HEAD
 for k=1:n_nodes_y*n_nodes_x   
     % --- West Flux ---
     if j == 1 % Boundary
         %Diffusion
         A(k,k) = A(k,k) - 3.5*cd*(dy/dx);
         A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
-        B(k) = B(k)- 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
+        B(k) = B(k) - 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
         %Convection
         B(k) = B(k) + Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
         
@@ -62,30 +63,19 @@ for k=1:n_nodes_y*n_nodes_x
         if Vx > 0
             if j==2 
                 A(k,k-1) = A(k,k-1) - 2*Vx*dy;
-                B(k) = B(k) - 1*Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
+                B(k) = B(k) - 1*Vx*dy*exact(centro_x(j-1)-(dx/2), centro_y(i));
             else
                 A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
                 A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
             end
         else %vento negativo
-           A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
-           A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
-        end
-=======
-for k=1:n_nodes_y*n_nodes_x
-    
-    % --- West Flux ---
-    if j == 1 % Boundary
-        A(k,k) = A(k,k) - 3.5*cd*(dy/dx);
-        A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
-        B(k) = B(k)- 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
-        
-        %         A(k,k) = A(k,k) - 2*cd*dy/dx;
-        %         B(k) = B(k)- 2*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i));
-    else % Center
-        A(k,k) = A(k,k) - cd*(dy/dx);
-        A(k,k-1) = A(k,k-1) + cd*(dy/dx);
->>>>>>> 1df98b7a942c8bba6d18732389c932f6a8143d18
+            if j== n_nodes_x
+                A(k,k) = A(k,k) - 2*Vx*dy;
+                
+            else
+                A(k,k)=A(k,k) - 3*(Vx*dy*0.5); 
+                A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
+            end
     end
     
     % --- East Flux ---
@@ -93,14 +83,12 @@ for k=1:n_nodes_y*n_nodes_x
         A(k,k)= A(k,k) - 3.5*cd*(dy/dx);
         A(k,k-1)= A(k,k-1) + 0.5*cd*(dy/dx);
         B(k)= B(k) - 3*cd*(dy/dx)*exact(centro_x(j)+(dx/2), centro_y(i));
-<<<<<<< HEAD
         %Convection
         B(k) = B(k) - Vx*dy*exact(centro_x(j)+(dx/2), centro_y(i));
     else % Center
         %Diffusion
         A(k,k)= A(k,k) - cd*(dy/dx);
-        A(k,k+1)= A(k,k+1) + cd*(dy/dx);
-        
+        A(k,k+1)= A(k,k+1) + cd*(dy/dx);   
         %Convection
         if Vx > 0
              if j==1
@@ -110,33 +98,18 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
                 A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
              end
-        else
-           A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
-           A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
-        end
-=======
-        
-        %        A(k,k)= A(k,k) - 2*cd*(dy/dx);
-        %        B(k)= B(k) - 2*cd*(dy/dx)*exact(centro_x(j)+(dx/2), centro_y(i));
-    else % Center
-        A(k,k)= A(k,k) - cd*(dy/dx);
-        A(k,k+1)= A(k,k+1) + cd*(dy/dx);
->>>>>>> 1df98b7a942c8bba6d18732389c932f6a8143d18
+        else %vento negativo
+            if j==n_nodes_x-1
+                A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
+                B(k) = B(k) + 1*Vx*dy*exact(centro_x(j+1)+(dx/2), centro_y(i));
+            else
+                A(k,k-1)= A(k,k+1) + 3*(Vx*dy*0.5); 
+                A(k,k-2)= A(k,k+2) - 1*(Vx*dy*0.5);
+            end
     end
     
     % --- South Flux ---
     if i == 1 % Boundary
-<<<<<<< HEAD
-        A(k,k)= A(k,k) - 3.5*cd*(dx/dy);
-        A(k,k+n_nodes_x)= A(k,k+n_nodes_x) + 0.5*cd*(dx/dy);
-        B(k)= B(k) - 3*cd*(dx/dy) * exact(centro_x(j), centro_y(i)-(dy/2));
-        
-        %         A(k,k)= A(k,k) - 2*cd*(dx/dy);
-        %         B(k)= B(k) - 2*cd*(dx/dy) * exact(centro_x(j), centro_y(i)-(dy/2));
-    else % Center
-        A(k,k) = A(k,k) - cd*(dx/dy);
-        A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*(dx/dy);
-=======
         % Diffusion
         A(k,k)= A(k,k) - 3.5*cd*(dx/dy);
         A(k,k+n_nodes_x)= A(k,k+n_nodes_x) + 0.5*cd*(dx/dy);
@@ -157,25 +130,18 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
             end
         else
-            A(k,k) = A(k,k) - 0.5*Vy*dx*3;
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
-        end 
->>>>>>> 1df98b7a942c8bba6d18732389c932f6a8143d18
+            if i == n_nodes_y
+                A(k,k) = A(k,k) - Vy*dx*2;
+                B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2));
+            else 
+                A(k,k) = A(k,k) - 0.5*Vy*dx*3;
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
+            end 
+        end
     end
     
     % --- North Flux ---
     if i == n_nodes_y % Boundary
-<<<<<<< HEAD
-        A(k,k) = A(k,k) - 3.5*cd*(dx/dy);
-        A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + 0.5*cd*dx/dy;
-        B(k) = B(k) - 3*cd*(dx/dy)*exact(centro_x(j), centro_y(i)+(dy/2));
-        
-        %         A(k,k) = A(k,k) - 2*cd*dx/dy;
-        %         B(k) = B(k) - 2*cd*(dx/dy)*exact(centro_x(j), centro_y(i)+(dy/2));
-    else % Center
-        A(k,k) = A(k,k) - cd*(dx/dy);
-        A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*(dx/dy);
-=======
         % Diffusion
         A(k,k) = A(k,k) - 3.5*cd*(dx/dy);
         A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + 0.5*cd*dx/dy;
@@ -197,10 +163,14 @@ for k=1:n_nodes_y*n_nodes_x
                 A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
             end
         else
-            A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
-            A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+            if i == n_nodes_y-1
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + Vy*dx*2;
+                B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i+1)+(dy/2));
+            else
+                A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
+                A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+            end
         end
->>>>>>> 1df98b7a942c8bba6d18732389c932f6a8143d18
     end
     
     
