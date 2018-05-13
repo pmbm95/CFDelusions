@@ -2,15 +2,15 @@ clc
 clear all
 close all
 % Computation Time
-% Convection
+% Vectorial
 % Time Dependent
 % Non Linear
 % SOR/ Jacobi
 % Residual
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 80;
-n_nodes_y = 80;
+n_nodes_x = 160;
+n_nodes_y = 160;
 
 dx = (dominio_x(2) - dominio_x(1) ) / n_nodes_x;
 dy = (dominio_y(2) - dominio_y(1) ) / n_nodes_y;
@@ -26,7 +26,7 @@ A = sparse(n_nodes_y*n_nodes_x, n_nodes_y*n_nodes_x);
 B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
-cd = 1;
+cd = -1;
 Vx = 100;
 Vy = 100;
 
@@ -60,14 +60,12 @@ for k=1:n_nodes_y*n_nodes_x
         
         %Convection
         if Vx > 0
-            if j==2 
-                %A(k,k-1) =  A(k,k-1) - Vx*dy;
+            if j==2
                 A(k,k-1) = A(k,k-1) - 2*Vx*dy;
                 B(k) = B(k) - 1*Vx*dy*exact(centro_x(j-1)-(dx/2), centro_y(i));
             else
-                A(k,k-1) =  A(k,k-1) - Vx*dy;
-                %A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
-                %A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
+                A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
+                A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
             end
         else %vento negativo
             if j== n_nodes_x
@@ -94,13 +92,11 @@ for k=1:n_nodes_y*n_nodes_x
         %Convection
         if Vx > 0
              if j==1
-                %A(k,k) =  A(k,k) + Vx*dy;
                 A(k,k) = A(k,k) + 2*Vx*dy;
                 B(k) = B(k) + 1*Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i));
              else
-                A(k,k) =  A(k,k) + Vx*dy;
-                %A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
-                %A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
+                A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
+                A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
              end
         else %vento negativo
             if j==n_nodes_x-1
@@ -128,13 +124,11 @@ for k=1:n_nodes_y*n_nodes_x
         % Convection
         if Vy > 0
             if i == 2 
-                %A(k,k-n_nodes_x) =  A(k,k-n_nodes_x) - Vy*dx;
                 A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - Vy*dx*2;
                 B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i-1)-(dy/2));
             else
-                A(k,k-n_nodes_x) =  A(k,k-n_nodes_x) - Vy*dx;
-                %A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
-                %A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
+                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
+                A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;  
             end
         else
             if i == n_nodes_y
@@ -163,13 +157,11 @@ for k=1:n_nodes_y*n_nodes_x
         % Convection
         if Vy > 0
             if i == 1
-                %A(k,k) =  A(k,k) + Vy*dx;
                 A(k,k) = A(k,k) + Vy*dx*2;
                 B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2));
             else 
-                A(k,k) =  A(k,k) + Vy*dx;
-                %A(k,k) = A(k,k) + 0.5*Vy*dx*3;
-                %A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
+                A(k,k) = A(k,k) + 0.5*Vy*dx*3;
+                A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
             end
         else
             if i == n_nodes_y-1
@@ -195,7 +187,6 @@ for k=1:n_nodes_y*n_nodes_x
 end
 
 
-
 SOR = false;
 if SOR
     w = 1.5;
@@ -204,8 +195,8 @@ if SOR
     u_old = zeros(n_nodes_x*n_nodes_y,1);
     residual = 1;
     while residual >= 1e-4
-       Low = tril(A,-1);
-       Up = triu(A,1);
+       Low = -tril(A,-1);
+       Up = -triu(A,1);
        D = diag(diag(A));
        u = zeros(n_nodes_x*n_nodes_y,1);
        for i=1:n_nodes_x*n_nodes_y
