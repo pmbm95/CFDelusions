@@ -44,7 +44,7 @@ N_n = 0;
 W_n = 0;
 E_n = 0;
 
-for t=0:dt:tmax
+
 
 
 
