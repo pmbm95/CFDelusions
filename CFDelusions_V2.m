@@ -26,9 +26,9 @@ A = sparse(n_nodes_y*n_nodes_x, n_nodes_y*n_nodes_x);
 B = sparse(n_nodes_y*n_nodes_x, 1);
 
 %--------- Coeff de difusao ----------
-cd = 1;
-Vx = 100;
-Vy = 100;
+cd = 10;
+Vx = 1;
+Vy = 1;
 
 i = 1 ;% Vertical Counter
 j = 1; % Horizontal counter
