@@ -33,9 +33,8 @@ centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
 %--------- Coeff de difusao ----------
 cd = -1;
-Vx = 100;
-Vy = 100;
-
+Vx = ones(n_nodes_x*n_nodes_y)*0;
+Vy = ones(n_nodes_x*n_nodes_y)*0;
 
 S_boundary_n = false;
 N_boundary_n = false;
@@ -51,6 +50,8 @@ if time_dependent
     U_old = arrayfun(@(u,v,t) exact(u,v,t), x_nodes, y_nodes, zeros(n_nodes_x, n_nodes_y));
     U_old = U_old(:);
     U_old2 = U_old;
+else
+    U_old = ones(n_nodes_x*n_nodes_y)*0;
 end
 
 for t=dt:dt:tmax
@@ -61,9 +62,9 @@ for t=dt:dt:tmax
     i = 1 ;% Vertical Counter
     j = 1; % Horizontal counter
     
-    if not(time_dependent)
-        t = 0;
-    end
+%     if not(time_dependent)
+%         t = 0;
+%     end
     
     %Matrix Assembly
     for k=1:n_nodes_y*n_nodes_x
@@ -74,28 +75,28 @@ for t=dt:dt:tmax
             A(k,k+1) = A(k,k+1) + 0.5*cd*dy/dx;
             B(k) = B(k) - 3*cd*dy/dx*exact(centro_x(j)-(dx/2), centro_y(i),t);
             %Convection
-            B(k) = B(k) + Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i),t);
+            B(k) = B(k) + Vx(k)*dy*exact(centro_x(j)-(dx/2), centro_y(i),t);
         else % Center
             %Diffusion
             A(k,k) = A(k,k) - cd*(dy/dx);
             A(k,k-1) = A(k,k-1) + cd*(dy/dx);
             
             %Convection
-            if Vx > 0
+            if Vx(k) > 0
                 if j==2
-                    A(k,k-1) = A(k,k-1) - 2*Vx*dy;
-                    B(k) = B(k) - 1*Vx*dy*exact(centro_x(j-1)-(dx/2), centro_y(i),t);
+                    A(k,k-1) = A(k,k-1) - 2*Vx(k)*dy;
+                    B(k) = B(k) - 1*Vx(k)*dy*exact(centro_x(j-1)-(dx/2), centro_y(i),t);
                 else
-                    A(k,k-1)=A(k,k-1) - 3*(Vx*dy*0.5);
-                    A(k,k-2)=A(k,k-2) + 1*(Vx*dy*0.5);
+                    A(k,k-1)=A(k,k-1) - 3*(Vx(k)*dy*0.5);
+                    A(k,k-2)=A(k,k-2) + 1*(Vx(k)*dy*0.5);
                 end
             else %vento negativo
                 if j== n_nodes_x
-                    A(k,k) = A(k,k) - 2*Vx*dy;
-                    B(k) = B(k) - 1*Vx*dy*exact(centro_x(j)+ (dx/2), centro_y(i),t);
+                    A(k,k) = A(k,k) - 2*Vx(k)*dy;
+                    B(k) = B(k) - 1*Vx(k)*dy*exact(centro_x(j)+ (dx/2), centro_y(i),t);
                 else
-                    A(k,k)=A(k,k) - 3*(Vx*dy*0.5);
-                    A(k,k+1)=A(k,k+1) + 1*(Vx*dy*0.5);
+                    A(k,k)=A(k,k) - 3*(Vx(k)*dy*0.5);
+                    A(k,k+1)=A(k,k+1) + 1*(Vx(k)*dy*0.5);
                 end
             end
         end
@@ -106,27 +107,27 @@ for t=dt:dt:tmax
             A(k,k-1)= A(k,k-1) + 0.5*cd*(dy/dx);
             B(k)= B(k) - 3*cd*(dy/dx)*exact(centro_x(j)+(dx/2), centro_y(i),t);
             %Convection
-            B(k) = B(k) - Vx*dy*exact(centro_x(j)+(dx/2), centro_y(i),t);
+            B(k) = B(k) - Vx(k)*dy*exact(centro_x(j)+(dx/2), centro_y(i),t);
         else % Center
             %Diffusion
             A(k,k)= A(k,k) - cd*(dy/dx);
             A(k,k+1)= A(k,k+1) + cd*(dy/dx);
             %Convection
-            if Vx > 0
+            if Vx(k) > 0
                 if j==1
-                    A(k,k) = A(k,k) + 2*Vx*dy;
-                    B(k) = B(k) + 1*Vx*dy*exact(centro_x(j)-(dx/2), centro_y(i),t);
+                    A(k,k) = A(k,k) + 2*Vx(k)*dy;
+                    B(k) = B(k) + 1*Vx(k)*dy*exact(centro_x(j)-(dx/2), centro_y(i),t);
                 else
-                    A(k,k)= A(k,k) + 3*(Vx*dy*0.5);
-                    A(k,k-1)= A(k,k-1) - 1*(Vx*dy*0.5);
+                    A(k,k)= A(k,k) + 3*(Vx(k)*dy*0.5);
+                    A(k,k-1)= A(k,k-1) - 1*(Vx(k)*dy*0.5);
                 end
             else %vento negativo
                 if j==n_nodes_x-1
-                    A(k,k+1)= A(k,k+1) + 2*(Vx*dy);
-                    B(k) = B(k) + 1*Vx*dy*exact(centro_x(j+1)+(dx/2), centro_y(i),t);
+                    A(k,k+1)= A(k,k+1) + 2*(Vx(k)*dy);
+                    B(k) = B(k) + 1*Vx(k)*dy*exact(centro_x(j+1)+(dx/2), centro_y(i),t);
                 else
-                    A(k,k+1)= A(k,k+1) + 3*(Vx*dy*0.5);
-                    A(k,k+2)= A(k,k+2) - 1*(Vx*dy*0.5);
+                    A(k,k+1)= A(k,k+1) + 3*(Vx(k)*dy*0.5);
+                    A(k,k+2)= A(k,k+2) - 1*(Vx(k)*dy*0.5);
                 end
             end
         end
@@ -138,27 +139,27 @@ for t=dt:dt:tmax
             A(k,k+n_nodes_x)= A(k,k+n_nodes_x) + 0.5*cd*(dx/dy);
             B(k)= B(k) - 3*cd*(dx/dy) * exact(centro_x(j), centro_y(i)-(dy/2),t);
             % Convection
-            B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2),t);
+            B(k) = B(k) + Vy(k)*dx*exact(centro_x(j), centro_y(i)-(dy/2),t);
         else % Center
             % Diffusion
             A(k,k) = A(k,k) - cd*(dx/dy);
             A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + cd*(dx/dy);
             % Convection
-            if Vy > 0
+            if Vy(k) > 0
                 if i == 2
-                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - Vy*dx*2;
-                    B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i-1)-(dy/2),t);
+                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - Vy(k)*dx*2;
+                    B(k) = B(k) - Vy(k)*dx*exact(centro_x(j), centro_y(i-1)-(dy/2),t);
                 else
-                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx*3;
-                    A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy*dx;
+                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy(k)*dx*3;
+                    A(k,k-2*n_nodes_x) = A(k,k-2*n_nodes_x) + 0.5*Vy(k)*dx;
                 end
             else
                 if i == n_nodes_y
-                    A(k,k) = A(k,k) - Vy*dx*2;
-                    B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2),t);
+                    A(k,k) = A(k,k) - Vy(k)*dx*2;
+                    B(k) = B(k) - Vy(k)*dx*exact(centro_x(j), centro_y(i)+(dy/2),t);
                 else
-                    A(k,k) = A(k,k) - 0.5*Vy*dx*3;
-                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx;
+                    A(k,k) = A(k,k) - 0.5*Vy(k)*dx*3;
+                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy(k)*dx;
                 end
             end
         end
@@ -170,27 +171,27 @@ for t=dt:dt:tmax
             A(k,k-n_nodes_x) = A(k,k-n_nodes_x) + 0.5*cd*dx/dy;
             B(k) = B(k) - 3*cd*(dx/dy)*exact(centro_x(j), centro_y(i)+(dy/2),t);
             % Convection
-            B(k) = B(k) - Vy*dx*exact(centro_x(j), centro_y(i)+(dy/2),t);
+            B(k) = B(k) - Vy(k)*dx*exact(centro_x(j), centro_y(i)+(dy/2),t);
         else % Center
             % Diffusion
             A(k,k) = A(k,k) - cd*(dx/dy);
             A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + cd*(dx/dy);
             % Convection
-            if Vy > 0
+            if Vy(k) > 0
                 if i == 1
-                    A(k,k) = A(k,k) + Vy*dx*2;
-                    B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i)-(dy/2),t);
+                    A(k,k) = A(k,k) + Vy(k)*dx*2;
+                    B(k) = B(k) + Vy(k)*dx*exact(centro_x(j), centro_y(i)-(dy/2),t);
                 else
-                    A(k,k) = A(k,k) + 0.5*Vy*dx*3;
-                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy*dx;
+                    A(k,k) = A(k,k) + 0.5*Vy(k)*dx*3;
+                    A(k,k-n_nodes_x) = A(k,k-n_nodes_x) - 0.5*Vy(k)*dx;
                 end
             else
                 if i == n_nodes_y-1
-                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + Vy*dx*2;
-                    B(k) = B(k) + Vy*dx*exact(centro_x(j), centro_y(i+1)+(dy/2),t);
+                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + Vy(k)*dx*2;
+                    B(k) = B(k) + Vy(k)*dx*exact(centro_x(j), centro_y(i+1)+(dy/2),t);
                 else
-                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy*dx*3;
-                    A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy*dx;
+                    A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy(k)*dx*3;
+                    A(k,k+2*n_nodes_x) = A(k,k+2*n_nodes_x) - 0.5*Vy(k)*dx;
                 end
             end
         end
@@ -228,7 +229,7 @@ for t=dt:dt:tmax
         Low = -tril(A,-1);
         Up = -triu(A,1);
         D = diag(A);
-        u = zeros(n_nodes_x*n_nodes_y,1);
+        u = U_old;
         while residual >= 1e-4
             for i=1:n_nodes_x*n_nodes_y
                 u(i) = D(i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
@@ -274,14 +275,15 @@ for t=dt:dt:tmax
     colorbar;
     caxis([0, .12]);
     
-    max(max(Error))
+    %max(max(Error))
     
-    pause(0.05);
+    %pause(0.05);
+    
+    U_old = U;
+    Vx=U;
+    Vy=U;
     
     if time_dependent
-        U_old2 = U_old;
-        U_old = U;
-    else
-        break;
+        U_old2 = U_old;   
     end    
 end
