@@ -12,14 +12,15 @@ close all
 
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 40;
-n_nodes_y = 40;
+n_nodes_x = 60;
+n_nodes_y = 60;
 
 SOR = false;
+w = 1.8;
 
 time_dependent = false;
-tmax = 10;
-dt = 0.5;
+tmax = 15;
+dt = 0.01;
 
 dx = (dominio_x(2) - dominio_x(1) ) / n_nodes_x;
 dy = (dominio_y(2) - dominio_y(1) ) / n_nodes_y;
@@ -33,9 +34,15 @@ centro_y = (dominio_y(1)+dy/2) : dy : (dominio_y(2)-dy/2);
 
 %--------- Coeff de difusao ----------
 cd = -1;
-Vx = ones(n_nodes_x*n_nodes_y)*0;
-Vy = ones(n_nodes_x*n_nodes_y)*0;
-
+if time_dependent
+    Vx = arrayfun(@(u,v,t) exact(u,v,t), x_nodes, y_nodes, 0*ones(n_nodes_x,n_nodes_y));
+    Vx = Vx';
+    Vx = Vx(:);
+    Vy = Vx;
+else
+    Vx = ones(n_nodes_x*n_nodes_y,1)*0;
+    Vy = ones(n_nodes_x*n_nodes_y,1)*0;
+end
 S_boundary_n = false;
 N_boundary_n = false;
 W_boundary_n = false;
@@ -47,11 +54,12 @@ W_n = 0;
 E_n = 0;
 
 if time_dependent
-    U_old = arrayfun(@(u,v,t) exact(u,v,t), x_nodes, y_nodes, zeros(n_nodes_x, n_nodes_y));
+    U_old = arrayfun(@(x,y,t) exact(x,y,t), x_nodes, y_nodes, 0*ones(n_nodes_x, n_nodes_y));
+    U_old = U_old';
     U_old = U_old(:);
     U_old2 = U_old;
 else
-    U_old = ones(n_nodes_x*n_nodes_y)*0;
+    U_old = ones(n_nodes_x*n_nodes_y,1)*0;
 end
 
 for t=dt:dt:tmax
@@ -221,21 +229,21 @@ for t=dt:dt:tmax
     end
     
     if SOR
-        w = 1.2;
-        n_iter_limit = 100;
+        n_iter_limit = 300;
         n_iter = 1;
-        u_old = zeros(n_nodes_x*n_nodes_y,1);
         residual = 1;
         Low = -tril(A,-1);
         Up = -triu(A,1);
         D = diag(A);
-        u = U_old;
-        while residual >= 1e-4
+        u_old = U_old;
+        u = zeros(n_nodes_x*n_nodes_y,1);
+        while residual >= 1e-3
             for i=1:n_nodes_x*n_nodes_y
                 u(i) = D(i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
                 u(i) = u_old(i) + w*(u(i)-u_old(i));
             end
-            residual = sum((u-u_old).^2)^0.5;
+            %residual = sum((u-u_old).^2)^0.5;
+            residual = max(abs(u-u_old));
             u_old = u;
             
             display = ['Iteration: ', num2str(n_iter)];
@@ -253,6 +261,13 @@ for t=dt:dt:tmax
         U = A\B;
     end
     
+    U_old = U;
+    Vx=U;
+    Vy=U;
+    if time_dependent
+        U_old2 = U_old;
+    end
+    
     U = vec2mat(U,n_nodes_x);
     
     U_exact = arrayfun(@(u,v,t) exact(u,v,t), x_nodes, y_nodes, t*ones(n_nodes_x,n_nodes_y));
@@ -265,7 +280,7 @@ for t=dt:dt:tmax
     %set(h, 'EdgeColor', 'none');
     colormap(jet);
     colorbar;
-    caxis([5, 35]);
+    %caxis([5, 35]);
     
     figure(2)
     h = pcolor(x_nodes, y_nodes, Error);
@@ -273,17 +288,11 @@ for t=dt:dt:tmax
     title(['Error at time: ', num2str(t)]);
     colormap(jet);
     colorbar;
-    caxis([0, .12]);
+    %caxis([0, .12]);
     
     %max(max(Error))
     
-    %pause(0.05);
+    pause(0.05);
     
-    U_old = U;
-    Vx=U;
-    Vy=U;
-    
-    if time_dependent
-        U_old2 = U_old;   
-    end    
+   
 end
