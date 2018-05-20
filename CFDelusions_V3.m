@@ -17,7 +17,7 @@ n_nodes_y = 40;
 
 SOR = false;
 
-time_dependent = true;
+time_dependent = false;
 tmax = 10;
 dt = 0.5;
 
@@ -276,7 +276,7 @@ for t=dt:dt:tmax
     
     max(max(Error))
     
-    pause(0.25);
+    pause(0.05);
     
     if time_dependent
         U_old2 = U_old;
