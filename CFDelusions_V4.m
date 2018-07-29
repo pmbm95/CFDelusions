@@ -12,13 +12,13 @@ close all
 
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 60;
-n_nodes_y = 60;
+n_nodes_x = 50;
+n_nodes_y = 50;
 
-SOR = false;
+SOR = true;
 w = 1.8;
 
-time_dependent = false;
+time_dependent = true;
 tmax = 15;
 dt = 0.01;
 
@@ -237,7 +237,7 @@ for t=dt:dt:tmax
         D = diag(A);
         u_old = U_old;
         u = zeros(n_nodes_x*n_nodes_y,1);
-        while residual >= 1e-3
+        while residual >= 1e-4
             for i=1:n_nodes_x*n_nodes_y
                 u(i) = D(i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
                 u(i) = u_old(i) + w*(u(i)-u_old(i));
