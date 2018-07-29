@@ -12,13 +12,14 @@ close all
 
 dominio_x = [-.5, .5];
 dominio_y = [-.5, .5];
-n_nodes_x = 100;
-n_nodes_y = 100;
 
-SOR = false;
+n_nodes_x = 50;
+n_nodes_y = 50;
+
+SOR = true;
 w = 1.8;
 
-time_dependent = false;
+time_dependent = true;
 tmax = 15;
 dt = 0.01;
 
@@ -151,6 +152,7 @@ for t=dt:dt:tmax
         end
     end
     
+<<<<<<< HEAD
     A_pre = A;
     B_pre = B; 
     n_iter_limit = 300;
@@ -238,6 +240,21 @@ for t=dt:dt:tmax
                         A(k,k+n_nodes_x) = A(k,k+n_nodes_x) + 0.5*Vy(k)*dx;
                     end
                 end
+=======
+    if SOR
+        n_iter_limit = 300;
+        n_iter = 1;
+        residual = 1;
+        Low = -tril(A,-1);
+        Up = -triu(A,1);
+        D = diag(A);
+        u_old = U_old;
+        u = zeros(n_nodes_x*n_nodes_y,1);
+        while residual >= 1e-4
+            for i=1:n_nodes_x*n_nodes_y
+                u(i) = D(i)^-1 * ( Low(i,:)*u + Up(i,:)*u_old + B(i));
+                u(i) = u_old(i) + w*(u(i)-u_old(i));
+>>>>>>> be1452e5868cf01b0a6a7f92aa01c22354d0f813
             end
             
             % --- North Flux ---
