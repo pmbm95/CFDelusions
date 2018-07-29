@@ -13,13 +13,8 @@ function f = source(x,y,t)
     conv_y = -u*200*pi*x^3*sin(2*pi*y);
     diff_x = cd*600*x*cos(2*pi*y);
     diff_y = -cd*400*pi^2*x^3*cos(2*pi*y);
-    fx = conv_x + conv_y + diff_x + diff_y; 
-    
+    f = conv_x + conv_y + diff_x + diff_y; 
     u = vy
-    conv_y = u*300*y^2*cos(2*pi*x);
-    conv_x = -u*200*pi*y^3*sin(2*pi*x);
-    diff_y = cd*600*y*cos(2*pi*x);
-    diff_x = -cd*400*pi^2*y^3*cos(2*pi*x);
-    fx = conv_x + conv_y + diff_x + diff_y; 
-    f = [fx fy]
+    
+    
 end

@@ -59,12 +59,11 @@ if time_dependent
     U_old = U_old';
     U_old = U_old(:);
     U_old2 = U_old;
-    V_old = V_old';
-    V_old = V_old(:);
-    V_old2 = V_old;
+    _old = U_old';
+    U_old = U_old(:);
+    U_old2 = U_old;
 else
     U_old = ones(n_nodes_x*n_nodes_y,1)*0;
-    V_old = ones(n_nodes_x*n_nodes_y,1)*0;
 end
 
 for t=dt:dt:tmax
